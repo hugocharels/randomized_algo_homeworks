@@ -3,12 +3,12 @@ import pytest
 from random import randint
 
 SIZE = 1000
-TRY = 99
+TRY = 1000
 
 
 PARAMS = [
 	([randint(1, 1000) for _ in range(SIZE)], randint(0, 999))
-	for _ in range(TRY)
+	for _ in range(TRY-1)
 ]
 
 

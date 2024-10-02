@@ -41,7 +41,6 @@ def lazy_select(arr: [int], k: int) -> int:
 	rank_a = sum(1 for y in arr if y < a)
 
 	# do the partitioning
-	partition = []
 	if k < n ** (1 / 4):
 		partition = [y for y in arr if y <= b]
 	elif k > n - n ** (1 / 4):
