@@ -3,7 +3,7 @@ import pytest
 from random import randint
 
 SIZE = 1000
-TRY = 0
+TRY = 99
 
 
 PARAMS = [
