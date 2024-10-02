@@ -37,9 +37,8 @@ def lazy_select(arr: [int], k: int) -> int:
 	a = sample[l]
 	b = sample[h]
 
-	# determine r_s(a) and r_s(b)
-	rank_a = sum(1 for y in arr if y < a)  # strictly less than a
-	rank_b = sum(1 for y in arr if y <= b)  # less than or equal to b
+	# determine r_s(a)
+	rank_a = sum(1 for y in arr if y < a)
 
 	# do the partitioning
 	partition = []
