@@ -3,7 +3,6 @@ import random
 
 
 def quick_select(arr: [int], k: int) -> int:
-
 	# pick a random pivot
 	pivot = random.choice(arr)
 
@@ -32,8 +31,8 @@ def lazy_select(arr: [int], k: int) -> int:
 
 	# setting boundaries
 	x = k * (n ** (-1 / 4))
-	l = max(math.floor(x - math.sqrt(n)), 0)
-	h = min(math.ceil(x + math.sqrt(n)), len(sample) - 1)
+	l = max(int(x - math.sqrt(n)), 0)
+	h = min(int(x + math.sqrt(n)), len(sample) - 1)
 	a = sample[l]
 	b = sample[h]
 
@@ -48,9 +47,9 @@ def lazy_select(arr: [int], k: int) -> int:
 	else:
 		partition = [y for y in arr if a <= y <= b]
 
-	# check if the partition is correct
-	adjusted_k = k - rank_a  # Adjust k relative to the partition
-	if adjusted_k < 0 or adjusted_k >= len(partition):
+	# check partition size and boundaries
+	if len(partition) > 4 * n ** (3 / 4) + 2 \
+			or k < rank_a or k >= rank_a + len(partition):
 		return lazy_select(arr, k)
 
 	partition.sort()
