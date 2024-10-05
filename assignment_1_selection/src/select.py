@@ -31,13 +31,14 @@ def lazy_select(arr: [int], k: int) -> int:
 
 	# setting boundaries
 	x = k * (n ** (-1 / 4))
-	l = max(int(x - math.sqrt(n)), 0)
-	h = min(int(x + math.sqrt(n)), len(sample) - 1)
+	l = max(math.floor(x - math.sqrt(n)), 0)
+	h = min(math.ceil(x + math.sqrt(n)), len(sample) - 1)
 	a = sample[l]
 	b = sample[h]
 
 	# determine r_s(a)
 	rank_a = sum(1 for y in arr if y < a)
+	rank_b = sum(1 for y in arr if y < b)
 
 	# do the partitioning
 	if k < n ** (1 / 4):
@@ -48,8 +49,8 @@ def lazy_select(arr: [int], k: int) -> int:
 		partition = [y for y in arr if a <= y <= b]
 
 	# check partition size and boundaries
-	if len(partition) > 4 * n ** (3 / 4) + 2 \
-			or k < rank_a or k >= rank_a + len(partition):
+	if len(partition) > 4 * n ** (3 / 4) + 2\
+		or k < rank_a or k >= rank_a + len(partition):
 		return lazy_select(arr, k)
 
 	partition.sort()
