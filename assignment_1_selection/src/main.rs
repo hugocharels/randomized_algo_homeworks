@@ -2,35 +2,24 @@ mod select;
 use rand::Rng;
 
 const LIST_SIZE: usize = 1000;  // Size of each list
-const NUM_LISTS: usize = 5;  // Number of lists to create
+const NUM_LISTS: usize = 1000;  // Number of lists to create
 
 fn main() {
-	// Generate random lists
-	let mut lists: Vec<Vec<i32>> = Vec::new();
 	let mut rng = rand::thread_rng();
-
-	for _ in 0..NUM_LISTS {
-		let list: Vec<i32> = (0..LIST_SIZE).map(|_| rng.gen_range(1..1000)).collect();
-		lists.push(list);
-	}
+	let mut n = 0;
 
 	// Execute QuickSelect and LazySelect on each list
-	for (i, list) in lists.iter_mut().enumerate() {
+	for i in 0..NUM_LISTS {
+		let list: Vec<i32> = (0..LIST_SIZE).map(|_| rng.gen_range(1..1000)).collect();
 		let k = rng.gen_range(1..=LIST_SIZE);
 
-		//println!("List {}: {:?}", i + 1, list);
-		println!(
-			"The {}-th smallest element in List {} (QuickSelect) is {}",
-			k,
-			i + 1,
-			select::quick_select(&mut list.clone(), k)
-		);
-		println!(
-			"The {}-th smallest element in List {} (LazySelect) is {}",
-			k,
-			i + 1,
-			select::lazy_select(&mut list.clone(), k)
-		);
-		println!("--------------------------------");
+		let q_res = select::quick_select(& list, k);
+		let l_res = select::lazy_select(& list, k);
+
+		if q_res != l_res {
+			n += 1;
+			println!("List {}: QuickSelect and LazySelect results differ for k = {} with q={} and l={}", i, k, q_res, l_res);
+		}
 	}
+	println!("Number of lists where QuickSelect and LazySelect results differ: {}/{}", n, NUM_LISTS);
 }
