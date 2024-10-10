@@ -50,7 +50,7 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 		// Step 3: Select a and b
 		let x = k as f64 * (n as f64).powf(-0.25);
 		let l = (x - (n as f64).sqrt().floor()).max(1.0) as usize;
-		let h = (x + (n as f64).sqrt().floor()).min(n_3_4 as f64) as usize;
+		let h = (x + (n as f64).sqrt().ceil()).min(n_3_4 as f64) as usize;
 		let a = r[l-1];
 		let b = r[h-1];
 
