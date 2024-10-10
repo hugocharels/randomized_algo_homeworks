@@ -1,6 +1,6 @@
 use rand::prelude::SliceRandom;
 
-fn _partition<T: Ord + Copy + std::fmt::Display>(s: &mut [T], low: usize, high: usize) -> usize {
+fn _partition<T: Ord + Copy>(s: &mut [T], low: usize, high: usize) -> usize {
 	let pivot = s[high];
 	let mut i = low;
 	for j in low..high {
@@ -13,7 +13,7 @@ fn _partition<T: Ord + Copy + std::fmt::Display>(s: &mut [T], low: usize, high: 
 	i
 }
 
-fn _quick_select<T: Ord + Copy + std::fmt::Display>(s: &mut [T], low: usize, high: usize, k: usize) -> T {
+fn _quick_select<T: Ord + Copy>(s: &mut [T], low: usize, high: usize, k: usize) -> T {
 	if low == high {
 		return s[low];
 	}
@@ -27,14 +27,14 @@ fn _quick_select<T: Ord + Copy + std::fmt::Display>(s: &mut [T], low: usize, hig
 	}
 }
 
-pub fn quick_select<T: Ord + Copy + std::fmt::Display>(arr: & [T], k: usize) -> T {
+pub fn quick_select<T: Ord + Copy>(arr: &[T], k: usize) -> T {
 	// create a list copy so that the original list is not modified
 	let mut new_arr = arr.to_vec();
 	_quick_select(&mut new_arr, 0, arr.len() - 1, k)
 }
 
 
-pub fn lazy_select<T: Ord + Copy + std::fmt::Display>(s: & [T], k: usize) -> T {
+pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 	let n = s.len();
 	let n_3_4 = (n as f64).powf(0.75) as usize;
 	let n_1_4 = (n as f64).powf(0.25) as usize;
@@ -60,7 +60,7 @@ pub fn lazy_select<T: Ord + Copy + std::fmt::Display>(s: & [T], k: usize) -> T {
 		if k == rank_a { return a;}
 		else if k == rank_b { return b; }
 
-		if rank_a > k { continue; }
+		if rank_a > k || rank_b < k { continue; }
 
 		// Step 4: Partition S based on a and b
 		let mut p: Vec<T> = if k < n_1_4 {
@@ -70,8 +70,6 @@ pub fn lazy_select<T: Ord + Copy + std::fmt::Display>(s: & [T], k: usize) -> T {
 		} else {
 			s.iter().filter(|&&y| a <= y && y <= b).cloned().collect()
 		};
-   	
-		if k - rank_a > p.len() - 1 { continue; }
 
 		if p.len() <= 4 * n_3_4 + 2 {
 			// Step 5: Sort P and find the k-th smallest element
