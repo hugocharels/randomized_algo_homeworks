@@ -4,12 +4,11 @@ mod integer;
 use rand::Rng;
 use integer::Integer;
 
-const LIST_SIZE: usize = 10000;  // Size of each list
-const NUM_LISTS: usize = 10;  // Number of lists to create
+const LIST_SIZE: usize = 10000000;  // Size of each list
+const NUM_LISTS: usize = 1;  // Number of lists to create
 
 fn main() {
 	let mut rng = rand::thread_rng();
-	let mut n = 0;
 
 	// Execute QuickSelect and LazySelect on each list
 	for i in 0..NUM_LISTS {
@@ -29,7 +28,6 @@ fn main() {
 
 		// Check if QuickSelect and LazySelect results differ
 		if q_res != l_res {
-			n += 1;
 			println!(
 				"List {}: QuickSelect and LazySelect results differ for k = {} with q = {} and l = {}",
 				i, k, q_res, l_res
@@ -40,9 +38,4 @@ fn main() {
 		println!("QuickSelect comparisons: {}", q_comparisons);
 		println!("LazySelect comparisons: {}", l_comparisons);
 	}
-
-	println!(
-		"Number of lists where QuickSelect and LazySelect results differ: {}/{}",
-		n, NUM_LISTS
-	);
 }
