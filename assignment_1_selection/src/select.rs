@@ -55,7 +55,10 @@ pub fn lazy_select<T: Ord + Copy + std::fmt::Display>(s: & [T], k: usize) -> T {
 		let b = r[h-1];
 
 		let rank_a = s.iter().filter(|&&y| y < a).count();
-		// let rank_b = s.iter().filter(|&&y| y < b).count();
+		let rank_b = s.iter().filter(|&&y| y < b).count();
+
+		if k == rank_a { return a;}
+		else if k == rank_b { return b; }
 
 		if rank_a > k { continue; }
 
@@ -73,6 +76,9 @@ pub fn lazy_select<T: Ord + Copy + std::fmt::Display>(s: & [T], k: usize) -> T {
 		if p.len() <= 4 * n_3_4 + 2 {
 			// Step 5: Sort P and find the k-th smallest element
 			p.sort();
+			if k < n_1_4 {
+				return p[k];
+			}
 			return p[k - rank_a];
 		}
 	}

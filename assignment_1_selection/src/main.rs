@@ -1,8 +1,8 @@
 mod select;
 use rand::Rng;
 
-const LIST_SIZE: usize = 1000;  // Size of each list
-const NUM_LISTS: usize = 1000;  // Number of lists to create
+const LIST_SIZE: usize = 100;  // Size of each list
+const NUM_LISTS: usize = 100000;  // Number of lists to create
 
 fn main() {
 	let mut rng = rand::thread_rng();
@@ -10,8 +10,8 @@ fn main() {
 
 	// Execute QuickSelect and LazySelect on each list
 	for i in 0..NUM_LISTS {
-		let list: Vec<i32> = (0..LIST_SIZE).map(|_| rng.gen_range(1..1000)).collect();
-		let k = rng.gen_range(0..=LIST_SIZE-1);
+		let list: Vec<i32> = (0..LIST_SIZE).map(|_| rng.gen_range(1..10000)).collect();
+		let k = rng.gen_range(0..=(LIST_SIZE-1)/2);
 
 		let q_res = select::quick_select(& list, k);
 		let l_res = select::lazy_select(& list, k);
