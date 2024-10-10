@@ -11,7 +11,7 @@ fn main() {
 	// Execute QuickSelect and LazySelect on each list
 	for i in 0..NUM_LISTS {
 		let list: Vec<i32> = (0..LIST_SIZE).map(|_| rng.gen_range(1..1000)).collect();
-		let k = rng.gen_range(1..=LIST_SIZE);
+		let k = rng.gen_range(0..=LIST_SIZE-1);
 
 		let q_res = select::quick_select(& list, k);
 		let l_res = select::lazy_select(& list, k);
