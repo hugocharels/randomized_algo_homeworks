@@ -38,7 +38,6 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 	let n = s.len();
 	let n_3_4 = (n as f64).powf(0.75) as usize;
 	let n_1_4 = (n as f64).powf(0.25) as usize;
-
 	loop {
 		// Step 1: Pick n^(3/4) elements randomly with replacement
 		let mut rng = rand::thread_rng();
@@ -69,12 +68,10 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 		        if rank_a > k { continue; } else { k - rank_a }
 		    }
 		};
-		if p.len() <= 4 * n_3_4 + 2 {
+		if p.len() <= 4 * n_3_4 + 2 && index < p.len() {
 			// Step 5: Sort P and find the k-th smallest element
 			p.sort();
-			if index < p.len() {
-				return p[index];
-			}
+			return p[index];
 		}
 	}
 }

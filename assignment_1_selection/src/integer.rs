@@ -1,5 +1,4 @@
 use std::cmp::Ordering;
-use std::fmt;
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct Integer {
@@ -56,13 +55,5 @@ impl PartialOrd<Self> for Integer {
 	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
 		Integer::update_comparisons();
 		Some(self.value.cmp(&other.value))
-	}
-}
-
-
-// Implement the Display trait to allow printing the value of Integer
-impl fmt::Display for Integer {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		write!(f, "{}", self.value)
 	}
 }
