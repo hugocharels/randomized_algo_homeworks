@@ -1,12 +1,7 @@
-// A class that represents an integer value.
-// But used to count the number of compaisons
-// in the selection sort algorithm.
-
 use std::cmp::Ordering;
 use std::fmt;
 
-// The Integer struct
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub(crate) struct Integer {
 	value: i32,
 }
@@ -50,28 +45,19 @@ impl PartialEq<Self> for Integer {
 	}
 }
 
+impl Ord for Integer {
+	fn cmp(&self, other: &Self) -> Ordering {
+		Integer::update_comparisons();
+		self.value.cmp(&other.value)
+	}
+}
+
 impl PartialOrd<Self> for Integer {
 	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
 		Integer::update_comparisons();
 		Some(self.value.cmp(&other.value))
 	}
 }
-
-impl Ord for Integer {
-	fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-		Integer::update_comparisons();
-		self.value.cmp(&other.value)
-	}
-}
-
-impl Clone for Integer {
-	fn clone(&self) -> Self {
-		Integer { value: self.value }
-	}
-}
-
-// Implement the Copy trait for Integer
-impl Copy for Integer {}
 
 
 // Implement the Display trait to allow printing the value of Integer

@@ -54,13 +54,16 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 		let a = r[l-1];
 		let b = r[h-1];
 
-		let rank_a = s.iter().filter(|&&y| y < a).count();
-		let rank_b = s.iter().filter(|&&y| y < b).count();
+		let mut rank_a= 0;
 
-		if k == rank_a { return a;}
-		else if k == rank_b { return b; }
-
-		if rank_a > k || rank_b < k { continue; }
+		if k >= n_1_4 {
+			rank_a = s.iter().filter(|&&y| y < a).count();
+			if rank_a == k {
+				return a;
+			} else if rank_a > k {
+				continue;
+			}
+		}
 
 		// Step 4: Partition S based on a and b
 		let mut p: Vec<T> = if k < n_1_4 {
@@ -71,7 +74,7 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 			s.iter().filter(|&&y| a <= y && y <= b).cloned().collect()
 		};
 
-		if p.len() <= 4 * n_3_4 + 2 {
+		if p.len() <= 4 * n_3_4 + 2 && k - rank_a < p.len() {
 			// Step 5: Sort P and find the k-th smallest element
 			p.sort();
 			if k < n_1_4 {
