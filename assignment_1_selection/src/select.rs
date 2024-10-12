@@ -54,33 +54,27 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 		let a = r[l-1];
 		let b = r[h-1];
 
-		let mut rank_a= 0;
-
-		if k >= n_1_4 {
-			rank_a = s.iter().filter(|&&y| y < a).count();
-			if rank_a == k {
-				return a;
-			} else if rank_a > k {
-				continue;
-			}
-		}
-
 		// Step 4: Partition S based on a and b
-		let mut p: Vec<T> = if k < n_1_4 {
-			s.iter().filter(|&&y| y <= b).cloned().collect()
-		} else if k > n - n_1_4 {
-			s.iter().filter(|&&y| y >= a).cloned().collect()
-		} else {
-			s.iter().filter(|&&y| a <= y && y <= b).cloned().collect()
+		let mut p: Vec<T> = match k {
+		    _ if k < n_1_4 => s.iter().filter(|&&y| y <= b).cloned().collect(),
+		    _ if k > n - n_1_4 => s.iter().filter(|&&y| y >= a).cloned().collect(),
+		    _ => s.iter().filter(|&&y| a <= y && y <= b).cloned().collect(),
 		};
 
-		if p.len() <= 4 * n_3_4 + 2 && k - rank_a < p.len() {
+		let index = match k {
+		    _ if k < n_1_4 => k,
+		    _ if k > n - n_1_4 => k - (n - p.len()),
+		    _ => {
+		        let rank_a = s.iter().filter(|&&y| y < a).count();
+		        if rank_a > k { continue; } else { k - rank_a }
+		    }
+		};
+		if p.len() <= 4 * n_3_4 + 2 {
 			// Step 5: Sort P and find the k-th smallest element
 			p.sort();
-			if k < n_1_4 {
-				return p[k];
+			if index < p.len() {
+				return p[index];
 			}
-			return p[k - rank_a];
 		}
 	}
 }

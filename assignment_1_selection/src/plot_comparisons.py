@@ -7,7 +7,7 @@ ln2 = np.log(2)  # Natural log of 2
 quickselect_factor = 2 * (1 + ln2)
 
 # Read the CSV file
-data = pd.read_csv('comparison_results_100try.csv')
+data = pd.read_csv('comparison_results.csv')
 
 # Separate the data by algorithm
 quickselect_data = data[data['Algorithm'] == 'QuickSelect']

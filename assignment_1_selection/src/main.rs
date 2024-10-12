@@ -7,15 +7,15 @@ use std::fs::File;
 use csv::Writer;
 
 const START_LIST_SIZE: usize = 10_000;    // Starting list size (10k)
-const END_LIST_SIZE: usize = 1_000_000;   // Ending list size (1M)
+const END_LIST_SIZE: usize = 500_000;   // Ending list size (1M)
 const STEP: usize = 10_000;               // Step size (increase by 10k)
-const NUM_LISTS: usize = 100;              // Number of lists to create for each list size
+const NUM_LISTS: usize = 100000;              // Number of lists to create for each list size
 
 fn gen_csv() -> std::io::Result<()> {
 	let mut rng = rand::thread_rng();
 
 	// Create a CSV writer to write to a file
-	let file = File::create("../comparison_results.csv")?;
+	let file = File::create("comparison_results.csv")?;
 	let mut wtr = Writer::from_writer(file);
 
 	// Write the header
@@ -80,6 +80,6 @@ fn compare() {
 }
 
 fn main() {
-	gen_csv().expect("");
-	// compare()
+	// gen_csv().expect("");
+	compare()
 }
