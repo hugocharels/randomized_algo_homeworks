@@ -6,16 +6,16 @@ use integer::Integer;
 use std::fs::File;
 use csv::Writer;
 
-const START_LIST_SIZE: usize = 10_000;    // Starting list size (10k)
-const END_LIST_SIZE: usize = 1_000_000;   // Ending list size (1M)
-const STEP: usize = 10_000;               // Step size (increase by 10k)
-const NUM_LISTS: usize = 100;              // Number of lists to create for each list size
+const START_LIST_SIZE: usize = 1_000;    // Starting list size (10k)
+const END_LIST_SIZE: usize = 1_000_000_000;   // Ending list size (1M)
+const STEP: usize = 10_000_000;               // Step size (increase by 10k)
+const NUM_LISTS: usize = 100_000;              // Number of lists to create for each list size
 
 fn gen_csv() -> std::io::Result<()> {
 	let mut rng = rand::thread_rng();
 
 	// Create a CSV writer to write to a file
-	let file = File::create("comparison_results.csv")?;
+	let file = File::create("comparison_results_big.csv")?;
 	let mut wtr = Writer::from_writer(file);
 
 	// Write the header
@@ -23,9 +23,9 @@ fn gen_csv() -> std::io::Result<()> {
 
 	// Iterate through different list sizes from 10k to 1M
 	for list_size in (START_LIST_SIZE..=END_LIST_SIZE).step_by(STEP) {
-		println!("List size: {}", list_size);
 		// Execute QuickSelect and LazySelect on each list size multiple times
-		for _ in 0..NUM_LISTS {
+		for it in 0..NUM_LISTS {
+			println!("List size: {}, it: {}", list_size, it);
 			// Create a list of Integers to track comparisons
 			let list: Vec<Integer> = (0..list_size).map(|_| Integer::new(rng.gen_range(0..(list_size as i32 - 1i32)))).collect();
 			let k = rng.gen_range(0..=(list_size - 1));
@@ -51,10 +51,10 @@ fn gen_csv() -> std::io::Result<()> {
 			// Write LazySelect data to CSV
 			wtr.write_record(&[list_size.to_string(), "LazySelect".to_string(), l_comparisons.to_string()])?;
 		}
-	}
 
-	// Flush the CSV writer to ensure all data is written
-	wtr.flush()?;
+		// Flush the CSV writer to ensure all data is written
+		wtr.flush()?;
+	}
 
 	Ok(())
 }
@@ -80,6 +80,6 @@ fn compare() {
 }
 
 fn main() {
-	gen_csv().expect("");
-	// compare()
+	// gen_csv().expect("");
+	compare()
 }

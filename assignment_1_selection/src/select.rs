@@ -64,10 +64,18 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 		    _ if k < n_1_4 => k,
 		    _ if k > n - n_1_4 => k - (n - p.len()),
 		    _ => {
-		        let rank_a = s.iter().filter(|&&y| y < a).count();
-		        if rank_a > k { continue; } else { k - rank_a }
+		        // let rank_a = s.iter().filter(|&&y| y < a).count();
+			    let mut rank_a = 0;
+			    for &y in s.iter() {
+			        if y < a {
+			            rank_a += 1;
+			        }
+			    }
+
+			    if rank_a > k { continue; } else { k - rank_a }
 		    }
 		};
+
 		if p.len() <= 4 * n_3_4 + 2 && index < p.len() {
 			// Step 5: Sort P and find the k-th smallest element
 			p.sort();

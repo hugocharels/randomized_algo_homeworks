@@ -7,7 +7,7 @@ ln2 = np.log(2)  # Natural log of 2
 quickselect_factor = 2 * (1 + ln2)
 
 # Read the CSV file
-data = pd.read_csv('comparison_results.csv')
+data = pd.read_csv('comparison_results_big.csv')
 
 # Separate the data by algorithm
 quickselect_data = data[data['Algorithm'] == 'QuickSelect']
@@ -46,4 +46,4 @@ plt.legend()
 
 # Show the plot
 plt.grid(True)
-plt.savefig('comparison_plot.png')
+plt.savefig('comparison_plot_big.png')
