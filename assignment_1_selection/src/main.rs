@@ -6,10 +6,10 @@ use integer::Integer;
 use std::fs::File;
 use csv::Writer;
 
-const START_LIST_SIZE: usize = 1_000;    // Starting list size (10k)
-const END_LIST_SIZE: usize = 1_000_000_000;   // Ending list size (1M)
-const STEP: usize = 10_000_000;               // Step size (increase by 10k)
-const NUM_LISTS: usize = 100_000;              // Number of lists to create for each list size
+const START_LIST_SIZE: usize = 6_900_000;    // Starting list size (10k)
+const END_LIST_SIZE: usize = 10_000_000;   // Ending list size (1M)
+const STEP: usize = 200_000;               // Step size (increase by 10k)
+const NUM_LISTS: usize = 100;              // Number of lists to create for each list size
 
 fn gen_csv() -> std::io::Result<()> {
 	let mut rng = rand::thread_rng();
@@ -80,6 +80,6 @@ fn compare() {
 }
 
 fn main() {
-	// gen_csv().expect("");
-	compare()
+	gen_csv().expect("");
+	// compare()
 }
