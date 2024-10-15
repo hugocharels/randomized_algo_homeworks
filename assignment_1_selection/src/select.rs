@@ -53,39 +53,32 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 		let a = r[l-1];
 		let b = r[h-1];
 
-		// Step 4: Partition S based on a and b
-		// let mut p: Vec<T> = match k {
-		//     _ if k < n_1_4 => s.iter().filter(|&&y| y <= b).cloned().collect(),
-		//     _ if k > n - n_1_4 => s.iter().filter(|&&y| y >= a).cloned().collect(),
-		//     _ => s.iter().filter(|&&y| a <= y && y <= b).cloned().collect(),
-		// };
-
+		// Step 4: Partition S based on a and b and find the rank of a
 		let mut p: Vec<T> = Vec::new();
-		let mut rank_a = 0;
+		let mut index;
 
-		if k < n_1_4 {
-			p = s.iter().filter(|&&y| y <= b).cloned().collect();
-		} else if k > n - n_1_4 {
-			p = s.iter().filter(|&&y| y >= a).cloned().collect();
-		} else {
-			for &y in s.iter() {
-				if a <= y {
-					if y <= b {
+		match k {
+			_ if k < n_1_4 => {
+				p = s.iter().filter(|&&y| y <= b).cloned().collect();
+				index = k;
+			},
+			_ if k > n - n_1_4 => {
+				p = s.iter().filter(|&&y| y >= a).cloned().collect();
+				index = k - (n - p.len()); // rank of a is equal to n - p.len()
+			},
+			_ => {
+				let mut rank_a = 0;
+				for &y in s.iter() {
+					if y < a {
+						rank_a += 1;
+					} else if y <= b {
 						p.push(y);
 					}
-				} else {
-					rank_a += 1;
 				}
+				if rank_a > k { continue; }
+				index = k - rank_a;
 			}
 		}
-
-		let index = match k {
-		    _ if k < n_1_4 => k,
-		    _ if k > n - n_1_4 => k - (n - p.len()),
-		    _ => {
-			    if rank_a > k { continue; } else { k - rank_a }
-		    }
-		};
 
 		if p.len() <= 4 * n_3_4 + 2 && index < p.len() {
 			// Step 5: Sort P and find the k-th smallest element
