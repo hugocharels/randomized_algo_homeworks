@@ -19,7 +19,7 @@ list_sizes = quickselect_avg_runtime.index
 # Plot the empirical runtime results
 plt.figure(figsize=(10, 6))
 plt.plot(list_sizes, quickselect_avg_runtime.values, label='QuickSelect Empirical Runtime', marker='o', color='blue')
-plt.plot(list_sizes, lazyselect_avg_runtime.values, label='LazySelect Empirical Runtime', marker='s', color='green')
+plt.plot(list_sizes, lazyselect_avg_runtime.values, label='LazySelect Empirical Runtime', marker='s', color='magenta')
 
 # Add labels and title
 plt.xlabel('List Size (n)')

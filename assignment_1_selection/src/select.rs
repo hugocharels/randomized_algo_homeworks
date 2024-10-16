@@ -27,10 +27,10 @@ fn _quick_select<T: Ord + Copy>(s: &mut [T], low: usize, high: usize, k: usize) 
 	}
 }
 
-pub fn quick_select<T: Ord + Copy>(arr: &[T], k: usize) -> T {
+pub fn quick_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 	// create a list copy so that the original list is not modified
-	let mut new_arr = arr.to_vec();
-	_quick_select(&mut new_arr, 0, arr.len() - 1, k)
+	let mut new_s = s.to_vec();
+	_quick_select(&mut new_s, 0, s.len() - 1, k)
 }
 
 
@@ -55,7 +55,7 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 
 		// Step 4: Partition S based on a and b and find the rank of a
 		let mut p: Vec<T> = Vec::new();
-		let mut index;
+		let index;
 
 		match k {
 			_ if k < n_1_4 => {

@@ -7,9 +7,9 @@ use std::fs::File;
 use std::time::Instant;
 use csv::Writer;
 
-const START_LIST_SIZE: usize = 200_000;    // Starting list size (10k)
-const END_LIST_SIZE: usize = 10_000_000;   // Ending list size (1M)
-const STEP: usize = 200_000;               // Step size (increase by 10k)
+const START_LIST_SIZE: usize = 2_000;    // Starting list size (10k)
+const END_LIST_SIZE: usize = 100_000;   // Ending list size (1M)
+const STEP: usize = 2_000;               // Step size (increase by 10k)
 const NUM_LISTS: usize = 100;              // Number of lists to create for each list size
 
 
@@ -17,11 +17,11 @@ fn main() -> std::io::Result<()> {
 	let mut rng = rand::thread_rng();
 
 	// Create a CSV writer for comparisons
-	let comparisons_file = File::create("comparisons_results.csv")?;
+	let comparisons_file = File::create("comparisons_results_small.csv")?;
 	let mut comparisons_wtr = Writer::from_writer(comparisons_file);
 
 	// Create a CSV writer for runtime
-	let runtime_file = File::create("runtime_results.csv")?;
+	let runtime_file = File::create("runtime_results_small.csv")?;
 	let mut runtime_wtr = Writer::from_writer(runtime_file);
 
 	// Write the headers for both CSV files
