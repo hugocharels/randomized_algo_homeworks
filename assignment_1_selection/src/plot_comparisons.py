@@ -1,6 +1,6 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 # Constants for expected comparisons
 ln2 = np.log(2)  # Natural log of 2
@@ -36,7 +36,8 @@ plt.plot(list_sizes, lazyselect_avg.values, label='LazySelect Empirical', marker
 plt.plot(list_sizes, quickselect_expected, label='QuickSelect Expected 2(1+ln2)n', linestyle='--', color='red')
 
 # Plot the expected comparisons for LazySelect (as a shaded area between 2n and 3n)
-plt.fill_between(list_sizes, lazyselect_expected_lower, lazyselect_expected_upper, color='orange', alpha=0.2, label='LazySelect Expected (2n + o(n))')
+plt.fill_between(list_sizes, lazyselect_expected_lower, lazyselect_expected_upper, color='orange', alpha=0.2,
+				 label='LazySelect Expected (2n + o(n))')
 
 # Add labels and title
 plt.xlabel('List Size (n)')

@@ -1,11 +1,11 @@
 mod select;
 mod integer;
 
-use rand::Rng;
+use csv::Writer;
 use integer::Integer;
+use rand::Rng;
 use std::fs::File;
 use std::time::Instant;
-use csv::Writer;
 
 
 fn gen_csv_comparisons_runtime(start_size: usize, end_size: usize, step: usize, num_lists: usize) -> std::io::Result<()> {
@@ -102,7 +102,7 @@ fn gen_csv_comparisons_k(size: usize, num_lists: usize) -> std::io::Result<()> {
 	comparisons_wtr.write_record(&["List Size", "Algorithm", "Comparisons", "K"])?;
 
 	// Iterate through different list sizes from 10k to 1M
-	for k in (0..=size-1) {
+	for k in (0..=size - 1) {
 		// Execute QuickSelect and LazySelect on each list size multiple times
 		println!("List size: {}, k: {}", size, k);
 		for it in 0..num_lists {
@@ -147,7 +147,6 @@ fn gen_csv_comparisons_k(size: usize, num_lists: usize) -> std::io::Result<()> {
 
 	Ok(())
 }
-
 
 
 use rayon::prelude::*;

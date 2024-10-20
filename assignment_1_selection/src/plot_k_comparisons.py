@@ -1,6 +1,5 @@
-import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
+import pandas as pd
 
 # Read the CSV file with the additional 'k' column
 data = pd.read_csv('comparisons_results_k.csv')
@@ -29,15 +28,17 @@ plt.figure(figsize=(10, 6))
 
 # QuickSelect area for standard deviation
 plt.fill_between(k_values, quickselect_lower_bound, quickselect_upper_bound,
-                 color='red', alpha=0.2, label='QuickSelect Standard Deviation Area')
+				 color='red', alpha=0.2, label='QuickSelect Standard Deviation Area')
 
 # LazySelect area for standard deviation
 plt.fill_between(k_values, lazyselect_lower_bound, lazyselect_upper_bound,
-                 color='orange', alpha=0.2, label='LazySelect Standard Deviation Area')
+				 color='orange', alpha=0.2, label='LazySelect Standard Deviation Area')
 
 # Plot mean comparisons for QuickSelect and LazySelect
-plt.plot(k_values, quickselect_avg_by_k.values, label='QuickSelect Mean Comparisons', marker='o', color='red', markersize=3, linestyle='None')
-plt.plot(k_values, lazyselect_avg_by_k.values, label='LazySelect Mean Comparisons', marker='o', color='orange', markersize=3, linestyle='None')
+plt.plot(k_values, quickselect_avg_by_k.values, label='QuickSelect Mean Comparisons', marker='o', color='red',
+		 markersize=3, linestyle='None')
+plt.plot(k_values, lazyselect_avg_by_k.values, label='LazySelect Mean Comparisons', marker='o', color='orange',
+		 markersize=3, linestyle='None')
 
 plt.xlabel('k')
 plt.ylabel('Mean Number of Comparisons')

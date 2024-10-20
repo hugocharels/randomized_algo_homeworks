@@ -51,8 +51,8 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 		let x = k as f64 * (n as f64).powf(-0.25);
 		let l = (x - (n as f64).sqrt().floor()).max(1.0) as usize;
 		let h = (x + (n as f64).sqrt().ceil()).min(n_3_4 as f64) as usize;
-		let a = r[l-1];
-		let b = r[h-1];
+		let a = r[l - 1];
+		let b = r[h - 1];
 
 		// Step 4: Partition S based on a and b and find the rank of a
 		let mut p: Vec<T> = Vec::new();
@@ -62,11 +62,11 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 			_ if k < n_1_4 => {
 				p = s.iter().filter(|&&y| y <= b).cloned().collect();
 				index = k;
-			},
+			}
 			_ if k > n - n_1_4 => {
 				p = s.iter().filter(|&&y| y >= a).cloned().collect();
 				index = k - (n - p.len()); // rank of a is equal to n - p.len()
-			},
+			}
 			_ => {
 				let mut rank_a = 0;
 				for &y in s.iter() {
