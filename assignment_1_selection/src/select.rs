@@ -41,7 +41,8 @@ pub fn lazy_select<T: Ord + Copy>(s: &[T], k: usize) -> T {
 	loop {
 		// Step 1: Pick n^(3/4) elements randomly with replacement
 		let mut rng = rand::thread_rng();
-		let mut r: Vec<T> = (0..n_3_4).map(|_| *s.choose(&mut rng).unwrap()).collect();
+		//let mut r: Vec<T> = (0..n_3_4).map(|_| *s.choose(&mut rng).unwrap()).collect();
+		let mut r: Vec<T> = s.choose_multiple(&mut rng, n_3_4).cloned().collect();
 
 		// Step 2: Sort R
 		r.sort();
