@@ -103,6 +103,9 @@ fn gen_csv_comparisons_k(size: usize, num_lists: usize) -> std::io::Result<()> {
 
 	// Iterate through different list sizes from 10k to 1M
 	for k in (0..=size - 1) {
+		if k % 1000 != 0 {
+			continue;
+		}
 		// Execute QuickSelect and LazySelect on each list size multiple times
 		println!("List size: {}, k: {}", size, k);
 		for it in 0..num_lists {
@@ -148,18 +151,10 @@ fn gen_csv_comparisons_k(size: usize, num_lists: usize) -> std::io::Result<()> {
 	Ok(())
 }
 
-
-use rayon::prelude::*;
-
 fn main() {
-	let tasks = vec![
-		|| gen_csv_comparisons_runtime(5000, 100000, 5000, 100),
-		|| gen_csv_comparisons_runtime(50000, 1000000, 50000, 100),
-		|| gen_csv_comparisons_runtime(500000, 10000000, 500000, 100),
-		|| gen_csv_comparisons_k(10000, 100),
-	];
-
-	tasks.into_par_iter().for_each(|task| {
-		task().unwrap();
-	});
+	gen_csv_comparisons_runtime(5000, 100000, 5000, 100).unwrap();
+	gen_csv_comparisons_runtime(50000, 1000000, 50000, 100).unwrap();
+	gen_csv_comparisons_runtime(500000, 10000000, 500000, 100).unwrap();
+	gen_csv_comparisons_k(10000, 100).unwrap();
+	gen_csv_comparisons_k(1000000, 100).unwrap();
 }
