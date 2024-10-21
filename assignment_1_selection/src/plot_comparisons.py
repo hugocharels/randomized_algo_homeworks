@@ -24,7 +24,7 @@ list_sizes = quickselect_avg.index
 # QuickSelect expected comparisons: 2(1 - ln(2))n
 quickselect_expected = quickselect_factor * list_sizes
 
-# LazySelect expected comparisons: [2n, 3n[
+# LazySelect expected comparisons
 lazyselect_expected_lower = 2 * list_sizes
 lazyselect_expected_upper = 3 * list_sizes
 
@@ -59,9 +59,9 @@ plt.fill_between(
     list_sizes,
     lazyselect_expected_lower,
     lazyselect_expected_upper,
-    color="orange",
-    alpha=0.2,
-    label="LazySelect Expected (2n + o(n))",
+    color="blue",
+    alpha=0.1,
+    label="[2n, 3n]",
 )
 
 # Add labels and title
