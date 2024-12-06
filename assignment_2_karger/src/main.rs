@@ -1,7 +1,8 @@
 mod core;
+mod min_cut;
 
 fn main() {
-    let mut g = core::Graph::new();
+    let mut g = core::AdjacencyGraph::new();
     g.add_edge(0, 1);
     g.add_edge(0, 2);
     g.add_edge(1, 2);

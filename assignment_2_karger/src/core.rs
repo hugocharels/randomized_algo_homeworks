@@ -1,9 +1,9 @@
 #[derive(Debug, Clone)]
-pub struct AdjacencMatrix {
+pub struct AdjacencyMatrix {
     pub matrix: Vec<Vec<usize>>,
 }
 
-impl AdjacencMatrix {
+impl AdjacencyMatrix {
     pub fn new() -> Self {
         Self { matrix: Vec::new() }
     }
@@ -31,13 +31,13 @@ impl AdjacencMatrix {
 }
 
 #[derive(Debug, Clone)]
-pub struct Graph {
-    pub adj_matrix: AdjacencMatrix,
+pub struct AdjacencyGraph {
+    pub adj_matrix: AdjacencyMatrix,
 }
 
-impl Graph {
+impl AdjacencyGraph {
     pub fn new() -> Self {
-        Self { adj_matrix: AdjacencMatrix::new() }
+        Self { adj_matrix: AdjacencyMatrix::new() }
     }
 
     pub fn add_edge(&mut self, u: usize, v: usize) {
