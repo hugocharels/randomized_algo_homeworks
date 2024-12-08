@@ -16,6 +16,7 @@ fn main() {
 	g.add_edge(6, 4);
 
 	println!("{:?}", g);
-	println!("{:?}", min_cut::contract(g.clone()));
-	println!("{:?}", min_cut::fast_cut(g.clone()));
+	println!("Contract Result: {:?}", min_cut::contract(g.clone()));
+	println!("FastCut Result: {:?}", min_cut::fast_cut(g.clone()));
+	println!("BruteForce Result: {:?}", min_cut::min_cut(g.clone()));
 }

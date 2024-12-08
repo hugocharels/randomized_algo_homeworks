@@ -36,7 +36,7 @@ fn contract_t(mut graph: (impl UnMulGraph + Clone), t: usize) -> impl UnMulGraph
 
 pub fn fast_cut(graph: (impl UnMulGraph + Clone)) -> usize {
 	if graph.len_vertices() <= 6 {
-		find_min_cut(graph)
+		min_cut(graph)
 	} else {
 		let t = (1.0 + graph.len_vertices() as f64 / 2.0_f64.sqrt()).ceil() as usize;
 		let g1 = contract_t(graph.clone(), t);
@@ -50,10 +50,8 @@ pub fn fast_cut(graph: (impl UnMulGraph + Clone)) -> usize {
 }
 
 // Brute force algorithm for finding the minimum cut of a graph
-fn find_min_cut(graph: impl UnMulGraph + Clone) -> usize {
+pub fn min_cut(graph: impl UnMulGraph + Clone) -> usize {
 	let n = graph.len_vertices();
-	assert!(n <= 6, "Graph should have at most 6 vertices for brute force");
-
 	let mut min_cut = usize::MAX;
 
 	// Generate all possible partitions of the vertices
