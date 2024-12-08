@@ -1,66 +1,27 @@
 use crate::min_cut::UnMulGraph;
+use rand::Rng;
 use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
-pub struct AdjacencyMatrix {
-	pub matrix: Vec<Vec<usize>>,
+pub struct VESetGraph {
+	edge_list: Vec<(usize, usize)>, // [(u, v), ...]
+	vertex_set: HashSet<usize>, // {u, v, ...}
 }
 
-impl AdjacencyMatrix {
-	pub fn new() -> Self {
-		Self { matrix: Vec::new() }
-	}
-
-	pub fn add_edge(&mut self, u: usize, v: usize) {
-		self.add_vertex_if_not_exists(u);
-		self.add_vertex_if_not_exists(v);
-		self.matrix[u.max(v)][v.min(u)] += 1;
-	}
-
-	pub fn len(&self) -> usize {
-		self.matrix.len()
-	}
-
-	fn add_vertex_if_not_exists(&mut self, v: usize) {
-		for i in 0..v + 1 {
-			if self.matrix.len() <= i {
-				self.matrix.push(vec![0; i + 1]);
-			} else if self.matrix[i].len() <= i {
-				self.matrix[i].resize(v + 1, 0);
+impl VESetGraph {
+	fn remap_vertices(&mut self, v: usize) {
+		let last_vertex = self.vertex_set.len();
+		self.vertex_set.remove(&last_vertex);
+		self.vertex_set.insert(v);
+		// Remap vertices in the edge list
+		for i in 0..self.len_edges() {
+			if self.edge_list[i].0 == last_vertex {
+				self.edge_list[i].0 = v;
+			} else if self.edge_list[i].1 == last_vertex {
+				self.edge_list[i].1 = v;
 			}
 		}
 	}
-
-}
-
-#[derive(Debug, Clone)]
-pub struct AdjacencyMatrixGraph {
-	pub adj_matrix: AdjacencyMatrix,
-}
-
-impl AdjacencyMatrixGraph {
-	pub fn new() -> Self {
-		Self { adj_matrix: AdjacencyMatrix::new() }
-	}
-
-	pub fn add_edge(&mut self, u: usize, v: usize) {
-		self.adj_matrix.add_edge(u, v);
-	}
-
-	pub fn contract_edge(&mut self, u: usize, v: usize) {
-		if self.adj_matrix.len() <= u || self.adj_matrix.len() <= v {
-			panic!("Vertex {} or {} does not exist", u, v);
-		} else {
-			todo!();
-		}
-	}
-}
-
-
-#[derive(Debug, Clone)]
-pub struct VESetGraph {
-	pub edge_list: Vec<(usize, usize)>,  // [(u, v), ...]
-	pub vertex_set: HashSet<usize>,      // {u, v, ...}
 }
 
 impl UnMulGraph for VESetGraph {
@@ -83,8 +44,10 @@ impl UnMulGraph for VESetGraph {
 	}
 
 	fn contract_edge(&mut self, u: usize, v: usize) {
+		let (u, v) = (u.min(v), u.max(v));
+
 		// Remove the edge (u, v) from the edge list
-		self.edge_list.retain(|&e| e != (u.min(v), v.max(u)));
+		self.edge_list.retain(|&e| e != (u, v));
 
 		// Remove vertex `v` from the vertex set
 		self.vertex_set.remove(&v);
@@ -102,11 +65,33 @@ impl UnMulGraph for VESetGraph {
 
 		// Remove self-loops (edges where both vertices are the same)
 		self.edge_list.retain(|&(a, b)| a != b);
+
+		// Remap vertices to ensure that the vertices are contiguous
+		if self.len_vertices() != v {
+			self.remap_vertices(v);
+		}
+
+		// Remove vertex `u` if there are no more edges connected to it
+		if !self.edge_list.iter().any(|&(a, b)| a == u || b == u) {
+			self.vertex_set.remove(&u);
+
+			// Remap vertices to ensure that the vertices are contiguous
+			self.remap_vertices(u);
+		}
 	}
 
 	fn get_random_edge(&self) -> (usize, usize) {
-		let rand_idx = rand::random::<usize>() % self.edge_list.len();
+		let rand_idx = rand::thread_rng().gen_range(0..self.edge_list.len());
 		self.edge_list[rand_idx]
+	}
+
+	fn edge_exists(&self, u: usize, v: usize) -> bool {
+		for i in 0..self.len_edges() {
+			if self.edge_list[i] == (u, v) || self.edge_list[i] == (v, u) {
+				return true;
+			}
+		}
+		false
 	}
 
 	fn len_vertices(&self) -> usize {
@@ -117,4 +102,3 @@ impl UnMulGraph for VESetGraph {
 		self.edge_list.len()
 	}
 }
-

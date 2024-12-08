@@ -4,6 +4,7 @@ pub trait UnMulGraph {
 	fn add_edge(&mut self, u: usize, v: usize); // Add edge (u, v)
 	fn contract_edge(&mut self, u: usize, v: usize); // Contract edge (u, v)
 	fn get_random_edge(&self) -> (usize, usize); // Return a random edge
+	fn edge_exists(&self, u: usize, v: usize) -> bool; // Return if the edge belongs to the graph
 	fn len_vertices(&self) -> usize; // Return the number of vertices
 	fn len_edges(&self) -> usize; // Return the number of edges
 }
@@ -11,29 +12,35 @@ pub trait UnMulGraph {
 
 // Karger's Algorithms for finding the minimum cut of a graph
 
-pub fn contract(graph: &mut impl UnMulGraph) -> usize {
+pub fn contract(mut graph: impl UnMulGraph) -> usize {
 	while graph.len_vertices() > 2 {
+		if graph.len_edges() == 0 {
+			println!("No more edges (wtf): {}", graph.len_vertices());
+		}
 		let (u, v) = graph.get_random_edge();
 		graph.contract_edge(u, v);
 	}
-	graph.len_vertices()
+	graph.len_edges()
 }
 
 fn contract_t(mut graph: (impl UnMulGraph + Clone), t: usize) -> impl UnMulGraph + Clone {
 	while graph.len_vertices() > t {
+		if graph.len_edges() == 0 {
+			println!("No more edges (wtf): {}", graph.len_vertices());
+		}
 		let (u, v) = graph.get_random_edge();
 		graph.contract_edge(u, v);
 	}
 	graph.clone()
 }
 
-pub fn fast_cut(mut graph: (impl UnMulGraph + Clone)) -> usize {
+pub fn fast_cut(graph: (impl UnMulGraph + Clone)) -> usize {
 	if graph.len_vertices() <= 6 {
 		find_min_cut(graph)
 	} else {
 		let t = (1.0 + graph.len_vertices() as f64 / 2.0_f64.sqrt()).ceil() as usize;
-		let mut g1 = contract_t(graph.clone(), t);
-		let mut g2 = contract_t(graph.clone(), t);
+		let g1 = contract_t(graph.clone(), t);
+		let g2 = contract_t(graph.clone(), t);
 		if g1.len_edges() < g2.len_edges() {
 			fast_cut(g1)
 		} else {
@@ -43,18 +50,43 @@ pub fn fast_cut(mut graph: (impl UnMulGraph + Clone)) -> usize {
 }
 
 // Brute force algorithm for finding the minimum cut of a graph
-fn find_min_cut(mut graph: (impl UnMulGraph + Clone)) -> usize {
-	// TODO: Implement the brute force algorithm for finding the minimum cut of a graph
-	let mut min_cut = usize::MAX;
+fn find_min_cut(graph: impl UnMulGraph + Clone) -> usize {
 	let n = graph.len_vertices();
-	let n_squared = n * n;
-	let n_squared_log_n = (n_squared as f64).log2() as usize;
-	for _ in 0..n_squared_log_n {
-		let mut g = graph.clone();
-		let cut = contract(&mut g);
-		if cut < min_cut {
-			min_cut = cut;
+	assert!(n <= 6, "Graph should have at most 6 vertices for brute force");
+
+	let mut min_cut = usize::MAX;
+
+	// Generate all possible partitions of the vertices
+	let total_partitions = 1 << n; // 2^n
+	for mask in 1..(total_partitions / 2) {
+		// Divide vertices into two sets based on the binary representation of the mask
+		let mut set_a = Vec::new();
+		let mut set_b = Vec::new();
+
+		for i in 0..n {
+			if (mask & (1 << i)) != 0 {
+				set_a.push(i);
+			} else {
+				set_b.push(i);
+			}
+		}
+		// Count the edges crossing the partition
+		let mut crossing_edges = 0;
+		for u in &set_a {
+			for v in &set_b {
+				// Check all edges (u, v) and count them
+				if graph.edge_exists(*u, *v) {
+					crossing_edges += 1;
+				}
+			}
+		}
+		assert_ne!(crossing_edges, 0, "Crossing edges can't be 0");
+
+		// Update the minimum cut
+		if crossing_edges < min_cut {
+			min_cut = crossing_edges;
 		}
 	}
+
 	min_cut
 }
