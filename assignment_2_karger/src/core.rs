@@ -13,16 +13,14 @@ impl VESetGraph {
 		let last_vertex = self.vertex_set.len();
 		self.vertex_set.remove(&last_vertex);
 		self.vertex_set.insert(v);
-		// Remap vertices in the edge list
-		for i in 0..self.len_edges() {
-			if self.edge_list[i].0 == last_vertex {
-				self.edge_list[i].0 = v;
-			} else if self.edge_list[i].1 == last_vertex {
-				self.edge_list[i].1 = v;
+		for edge in &mut self.edge_list {
+			if edge.0 == last_vertex {
+				edge.0 = v;
+			} else if edge.1 == last_vertex {
+				edge.1 = v;
 			}
-			// Ensure that the first vertex is less than the second vertex
-			if self.edge_list[i].0 > self.edge_list[i].1 {
-				self.edge_list[i] = (self.edge_list[i].1, self.edge_list[i].0);
+			if edge.0 > edge.1 {
+				*edge = (edge.1, edge.0);
 			}
 		}
 	}
@@ -55,19 +53,13 @@ impl UnMulGraph for VESetGraph {
 
 		// Remove vertex `v` from the vertex set
 		self.vertex_set.remove(&v);
-
-		// Replace all instances of `v` with `u` in the edge list
-		self.edge_list = self.edge_list
-			.iter()
-			.map(|&e| {
-				let (a, b) = e;
-				let new_a = if a == v { u } else { a };
-				let new_b = if b == v { u } else { b };
-				(new_a.min(new_b), new_a.max(new_b))
-			})
-			.collect();
-
-		// Remove self-loops (edges where both vertices are the same)
+		self.edge_list.iter_mut().for_each(|edge| {
+			if edge.0 == v { edge.0 = u; }
+			if edge.1 == v { edge.1 = u; }
+			if edge.0 > edge.1 {
+				*edge = (edge.1, edge.0);
+			}
+		});
 		self.edge_list.retain(|&(a, b)| a != b);
 
 		// Remap vertices to ensure that the vertices are contiguous
