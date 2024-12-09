@@ -1,5 +1,5 @@
 use crate::min_cut::UnMulGraph;
-use rand::Rng;
+use rand::prelude::IteratorRandom;
 use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
@@ -19,6 +19,10 @@ impl VESetGraph {
 				self.edge_list[i].0 = v;
 			} else if self.edge_list[i].1 == last_vertex {
 				self.edge_list[i].1 = v;
+			}
+			// Ensure that the first vertex is less than the second vertex
+			if self.edge_list[i].0 > self.edge_list[i].1 {
+				self.edge_list[i] = (self.edge_list[i].1, self.edge_list[i].0);
 			}
 		}
 	}
@@ -81,17 +85,11 @@ impl UnMulGraph for VESetGraph {
 	}
 
 	fn get_random_edge(&self) -> (usize, usize) {
-		let rand_idx = rand::thread_rng().gen_range(0..self.edge_list.len());
-		self.edge_list[rand_idx]
+		self.edge_list.iter().cloned().choose(&mut rand::thread_rng()).expect("No edges available")
 	}
 
 	fn edge_exists(&self, u: usize, v: usize) -> bool {
-		for i in 0..self.len_edges() {
-			if self.edge_list[i] == (u, v) || self.edge_list[i] == (v, u) {
-				return true;
-			}
-		}
-		false
+		self.edge_list.contains(&(u.min(v), v.max(u)))
 	}
 
 	fn len_vertices(&self) -> usize {

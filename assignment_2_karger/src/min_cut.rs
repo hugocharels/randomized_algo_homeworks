@@ -23,7 +23,7 @@ pub fn contract(mut graph: impl UnMulGraph) -> usize {
 	graph.len_edges()
 }
 
-fn contract_t(mut graph: (impl UnMulGraph + Clone), t: usize) -> impl UnMulGraph + Clone {
+fn contract_t(mut graph: impl UnMulGraph + Clone, t: usize) -> impl UnMulGraph + Clone {
 	while graph.len_vertices() > t {
 		if graph.len_edges() == 0 {
 			println!("No more edges (wtf): {}", graph.len_vertices());
@@ -34,7 +34,7 @@ fn contract_t(mut graph: (impl UnMulGraph + Clone), t: usize) -> impl UnMulGraph
 	graph.clone()
 }
 
-pub fn fast_cut(graph: (impl UnMulGraph + Clone)) -> usize {
+pub fn fast_cut(graph: impl UnMulGraph + Clone) -> usize {
 	if graph.len_vertices() <= 6 {
 		min_cut(graph)
 	} else {
@@ -55,6 +55,7 @@ pub fn min_cut(graph: impl UnMulGraph + Clone) -> usize {
 	let mut min_cut = usize::MAX;
 
 	// Generate all possible partitions of the vertices
+	// Need the set of vertices to be {0, 1, 2, ..., n - 1}
 	let total_partitions = 1 << n; // 2^n
 	for mask in 1..(total_partitions / 2) {
 		// Divide vertices into two sets based on the binary representation of the mask
