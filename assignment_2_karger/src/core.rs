@@ -2,13 +2,20 @@ use crate::min_cut::UnMulGraph;
 use rand::prelude::IteratorRandom;
 use std::collections::HashSet;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct VESetGraph {
 	edge_list: Vec<(usize, usize)>, // [(u, v), ...]
 	vertex_set: HashSet<usize>, // {u, v, ...}
 }
 
 impl VESetGraph {
+	fn new() -> Self {
+		Self {
+			edge_list: Vec::new(),
+			vertex_set: HashSet::new(),
+		}
+	}
+
 	fn remap_vertices(&mut self, v: usize) {
 		let last_vertex = self.vertex_set.len();
 		self.vertex_set.remove(&last_vertex);
@@ -27,13 +34,6 @@ impl VESetGraph {
 }
 
 impl UnMulGraph for VESetGraph {
-	fn new() -> Self {
-		Self {
-			edge_list: Vec::new(),
-			vertex_set: HashSet::new(),
-		}
-	}
-
 	fn add_edge(&mut self, u: usize, v: usize) {
 		if u == v {
 			panic!("Self-loop is not allowed");
@@ -74,6 +74,10 @@ impl UnMulGraph for VESetGraph {
 			// Remap vertices to ensure that the vertices are contiguous
 			self.remap_vertices(u);
 		}
+	}
+
+	fn get_num_edges(&self, u: usize, v: usize) -> usize {
+		self.edge_list.iter().filter(|&&(a, b)| (a == u && b == v) || (a == v && b == u)).count()
 	}
 
 	fn get_random_edge(&self) -> (usize, usize) {

@@ -1,8 +1,10 @@
+use std::fmt::Debug;
+
 // Undirected MultiGraph Interface
-pub trait UnMulGraph {
-	fn new() -> Self; // Create a new graph
+pub trait UnMulGraph: Debug + Clone {
 	fn add_edge(&mut self, u: usize, v: usize); // Add edge (u, v)
 	fn contract_edge(&mut self, u: usize, v: usize); // Contract edge (u, v)
+	fn get_num_edges(&self, u: usize, v: usize) -> usize; // Return the number of edges between u, v
 	fn get_random_edge(&self) -> (usize, usize); // Return a random edge
 	fn edge_exists(&self, u: usize, v: usize) -> bool; // Return if the edge belongs to the graph
 	fn len_vertices(&self) -> usize; // Return the number of vertices
@@ -56,7 +58,7 @@ pub fn min_cut(graph: impl UnMulGraph + Clone) -> usize {
 
 	// Generate all possible partitions of the vertices
 	// Need the set of vertices to be {0, 1, 2, ..., n - 1}
-	let total_partitions = 1 << n; // 2^n
+	let total_partitions: u64 = 1 << n; // 2^n
 	for mask in 1..(total_partitions / 2) {
 		// Divide vertices into two sets based on the binary representation of the mask
 		let mut set_a = Vec::new();
@@ -73,10 +75,8 @@ pub fn min_cut(graph: impl UnMulGraph + Clone) -> usize {
 		let mut crossing_edges = 0;
 		for u in &set_a {
 			for v in &set_b {
-				// Check all edges (u, v) and count them
-				if graph.edge_exists(*u, *v) {
-					crossing_edges += 1;
-				}
+				// Add the number of edges u, v
+				crossing_edges += graph.get_num_edges(*u, *v);
 			}
 		}
 		assert_ne!(crossing_edges, 0, "Crossing edges can't be 0");
