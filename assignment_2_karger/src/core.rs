@@ -9,13 +9,6 @@ pub struct VESetGraph {
 }
 
 impl VESetGraph {
-	fn new() -> Self {
-		Self {
-			edge_list: Vec::new(),
-			vertex_set: HashSet::new(),
-		}
-	}
-
 	fn remap_vertices(&mut self, v: usize) {
 		let last_vertex = self.vertex_set.len();
 		self.vertex_set.remove(&last_vertex);

@@ -27,9 +27,6 @@ pub fn contract(mut graph: impl UnMulGraph) -> usize {
 
 fn contract_t(mut graph: impl UnMulGraph + Clone, t: usize) -> impl UnMulGraph + Clone {
 	while graph.len_vertices() > t {
-		if graph.len_edges() == 0 {
-			println!("No more edges (wtf): {}", graph.len_vertices());
-		}
 		let (u, v) = graph.get_random_edge();
 		graph.contract_edge(u, v);
 	}
@@ -54,11 +51,13 @@ pub fn fast_cut(graph: impl UnMulGraph + Clone) -> usize {
 // Brute force algorithm for finding the minimum cut of a graph
 pub fn min_cut(graph: impl UnMulGraph + Clone) -> usize {
 	let n = graph.len_vertices();
+	assert!(n <= 6, "Graph must have at most 6 vertices");
+
 	let mut min_cut = usize::MAX;
 
 	// Generate all possible partitions of the vertices
 	// Need the set of vertices to be {0, 1, 2, ..., n - 1}
-	let total_partitions: u64 = 1 << n; // 2^n
+	let total_partitions: u8 = 1 << n; // 2^n
 	for mask in 1..(total_partitions / 2) {
 		// Divide vertices into two sets based on the binary representation of the mask
 		let mut set_a = Vec::new();
