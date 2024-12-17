@@ -1,3 +1,4 @@
+use std::cmp::min;
 use std::fmt::Debug;
 
 // Undirected MultiGraph Interface
@@ -16,9 +17,6 @@ pub trait UnMulGraph: Debug + Clone {
 
 pub fn contract(mut graph: impl UnMulGraph) -> usize {
 	while graph.len_vertices() > 2 {
-		if graph.len_edges() == 0 {
-			println!("No more edges (wtf): {}", graph.len_vertices());
-		}
 		let (u, v) = graph.get_random_edge();
 		graph.contract_edge(u, v);
 	}
@@ -40,11 +38,7 @@ pub fn fast_cut(graph: impl UnMulGraph + Clone) -> usize {
 		let t = (1.0 + graph.len_vertices() as f64 / 2.0_f64.sqrt()).ceil() as usize;
 		let g1 = contract_t(graph.clone(), t);
 		let g2 = contract_t(graph.clone(), t);
-		if g1.len_edges() < g2.len_edges() {
-			fast_cut(g1)
-		} else {
-			fast_cut(g2)
-		}
+		min(fast_cut(g1), fast_cut(g2))
 	}
 }
 
