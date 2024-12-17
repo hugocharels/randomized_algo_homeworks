@@ -1,19 +1,19 @@
-use assignment_2_karger::{
-	core::VESetGraph,
-	data_generator::*,
-	graph_builder::GraphBuilder,
-	min_cut::{contract, fast_cut},
-};
+use assignment_2_karger::data_generator::*;
 
 fn main() {
-	let graph = GraphBuilder::new()
-		.set_num_vertices(5)
-		.set_num_edges(8)
-		.build_random::<VESetGraph>();
-	println!("{:?}", graph);
-	println!("Contract Result: {:?}", best_cut(graph.clone(), 5, contract));
-	println!("FastCut Result: {:?}", best_cut(graph.clone(), 1, fast_cut));
-	// println!("BruteForce Result: {:?}", min_cut(graph.clone()));
-
-	generate_data();
+	generate_data(
+		vec![100,200,300,400,500,600,700,800,900,1000],
+		|v: usize| 2*v,
+		"generated_data/hundred_2v.csv"
+	);
+	generate_data(
+		vec![100,200,300,400,500,600,700,800,900,1000],
+		|v: usize| 5*v,
+		"generated_data/hundred_5v.csv"
+	);
+	generate_data(
+		vec![100,200,300,400,500,600,700,800,900,1000],
+		|v: usize| 10*v,
+		"generated_data/hundred_10v.csv"
+	);
 }

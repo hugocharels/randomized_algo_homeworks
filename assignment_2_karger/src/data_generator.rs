@@ -20,62 +20,69 @@ where
 	best_result
 }
 
-pub fn generate_data() {
-	// Open a csv file in write mode
-	let mut wtr = csv::Writer::from_path("data.csv").unwrap();
+pub fn generate_data<F>(
+	num_vertices: Vec<usize>,
+	edge_fn: F,
+	csv_file_name: &str,
+) where
+	F: Fn(usize) -> usize,
+{
+	// Open a CSV file in write mode
+	let mut wtr = csv::Writer::from_path(csv_file_name).expect("Unable to create CSV file");
 
 	// Write the header row
-	wtr.write_record(&["algo", "len_vertices", "len_edges", "time", "percentage"]).unwrap();
+	wtr.write_record(&["algo", "len_vertices", "len_edges", "time", "percentage"])
+		.expect("Failed to write header row");
 
-	// List of num of vertices and edges
-	let num_vertices = vec![16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192];
-	let num_edges = vec![64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768];
-
-	for i in 0..num_vertices.len().min(num_edges.len()) {
+	for &vertices in &num_vertices {
+		let edges = edge_fn(vertices);
 		let graph = GraphBuilder::new()
-			.set_num_vertices(num_vertices[i])
-			.set_num_edges(num_edges[i])
+			.set_num_vertices(vertices)
+			.set_num_edges(edges)
 			.build_random::<VESetGraph>();
 
-		println!("Generating data for vertices: {}, edges: {}", num_vertices[i], num_edges[i]);
+		println!("Generating data for vertices: {}, edges: {}", vertices, edges);
 
-		let mut time = 0;
-		let mut best_result = usize::MAX;
-		let mut count: u8 = 0;
-		for _ in 0..100 {
-			let start = Instant::now();
-			let result = best_cut(graph.clone(), 1, fast_cut);
-			time += start.elapsed().as_micros();
-			if result < best_result {
-				best_result = result;
-				count = 1;
-			} else if result == best_result {
-				count += 1;
-			}
-		}
-		let percentage = (count as f64 / 100.0) * 100.0;
-		wtr.write_record(&["fast_cut", &num_vertices[i].to_string(), &num_edges[i].to_string(), &time.to_string(), &percentage.to_string()]).unwrap();
+		// Analyze using FastCut
+		let (best_result_fast, time_fast, percentage_fast) = analyze_algorithm(graph.clone(), fast_cut);
+		wtr.write_record(&["fast_cut", &vertices.to_string(), &edges.to_string(), &time_fast.to_string(), &percentage_fast.to_string()])
+			.expect("Failed to write FastCut row");
 
-		println!("Result for FastCut: {}", best_result);
+		println!("Result for FastCut: {}", best_result_fast);
 
-		time = 0;
-		count = 0;
-		for _ in 0..100 {
-			let start = Instant::now();
-			let result = best_cut(graph.clone(), 1, contract);
-			time += start.elapsed().as_micros();
-			if result < best_result {
-				best_result = result;
-				count = 1;
-			} else if result == best_result {
-				count += 1;
-			}
-		}
-		let percentage = (count as f64 / 100.0) * 100.0;
-		wtr.write_record(&["contract", &num_vertices[i].to_string(), &num_edges[i].to_string(), &time.to_string(), &percentage.to_string()]).unwrap();
+		// Analyze using Contract
+		let (best_result_contract, time_contract, percentage_contract) = analyze_algorithm(graph.clone(), contract);
+		wtr.write_record(&["contract", &vertices.to_string(), &edges.to_string(), &time_contract.to_string(), &percentage_contract.to_string()])
+			.expect("Failed to write Contract row");
 
-		println!("Result for Contract: {}", best_result);
+		println!("Result for Contract: {}", best_result_contract);
 
-		wtr.flush().unwrap();
+		wtr.flush().expect("Failed to flush CSV writer");
 	}
+}
+
+fn analyze_algorithm<T, F>(graph: T, algo: F) -> (usize, u128, f64)
+where
+	T: UnMulGraph + Clone,
+	F: Fn(T) -> usize,
+{
+	let mut time = 0;
+	let mut best_result = usize::MAX;
+	let mut count: u8 = 0;
+
+	for _ in 0..100 {
+		let start = Instant::now();
+		let result = best_cut(graph.clone(), 1, &algo);
+		time += start.elapsed().as_micros();
+
+		if result < best_result {
+			best_result = result;
+			count = 1;
+		} else if result == best_result {
+			count += 1;
+		}
+	}
+
+	let percentage = (count as f64 / 100.0) * 100.0;
+	(best_result, time, percentage)
 }
