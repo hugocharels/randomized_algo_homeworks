@@ -1,4 +1,5 @@
 use std::cmp::min;
+use std::collections::HashSet;
 use std::fmt::Debug;
 
 // Undirected MultiGraph Interface
@@ -10,6 +11,7 @@ pub trait UnMulGraph: Debug + Clone {
 	fn edge_exists(&self, u: usize, v: usize) -> bool; // Return if the edge belongs to the graph
 	fn len_vertices(&self) -> usize; // Return the number of vertices
 	fn len_edges(&self) -> usize; // Return the number of edges
+	fn vertex_set(&self) -> &HashSet<usize>; // Return the set of vertices
 }
 
 
@@ -42,28 +44,37 @@ pub fn fast_cut(graph: impl UnMulGraph + Clone) -> usize {
 	}
 }
 
-// Brute force algorithm for finding the minimum cut of a graph
-pub fn min_cut(graph: impl UnMulGraph + Clone) -> usize {
-	let n = graph.len_vertices();
-	assert!(n <= 6, "Graph must have at most 6 vertices");
 
-	let mut min_cut = usize::MAX;
+// Helper function to generate all possible bipartitions of a set
+fn bipartitions(set: &HashSet<usize>) -> impl Iterator<Item=(HashSet<usize>, HashSet<usize>)> {
+	let elements: Vec<_> = set.iter().cloned().collect();
 
-	// Generate all possible partitions of the vertices
-	// Need the set of vertices to be {0, 1, 2, ..., n - 1}
-	let total_partitions: u8 = 1 << n; // 2^n
-	for mask in 1..(total_partitions / 2) {
-		// Divide vertices into two sets based on the binary representation of the mask
-		let mut set_a = Vec::new();
-		let mut set_b = Vec::new();
+	(1..(1 << elements.len())).filter_map(move |mask| {
+		let mut part1 = HashSet::new();
+		let mut part2 = HashSet::new();
 
-		for i in 0..n {
+		for (i, &elem) in elements.iter().enumerate() {
 			if (mask & (1 << i)) != 0 {
-				set_a.push(i);
+				part1.insert(elem);
 			} else {
-				set_b.push(i);
+				part2.insert(elem);
 			}
 		}
+
+		// Ensure that only one of the symmetric pairs is returned
+		if !part1.is_empty() && !part2.is_empty() && part1.iter().min() <= part2.iter().min() {
+			Some((part1, part2))
+		} else {
+			None
+		}
+	})
+}
+
+
+// Brute force algorithm for finding the minimum cut of a graph
+pub fn min_cut(graph: impl UnMulGraph + Clone) -> usize {
+	let mut min_cut = usize::MAX;
+	for (set_a, set_b) in bipartitions(graph.vertex_set()) {
 		// Count the edges crossing the partition
 		let mut crossing_edges = 0;
 		for u in &set_a {
@@ -73,12 +84,10 @@ pub fn min_cut(graph: impl UnMulGraph + Clone) -> usize {
 			}
 		}
 		assert_ne!(crossing_edges, 0, "Crossing edges can't be 0");
-
 		// Update the minimum cut
 		if crossing_edges < min_cut {
 			min_cut = crossing_edges;
 		}
 	}
-
 	min_cut
 }

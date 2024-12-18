@@ -8,24 +8,6 @@ pub struct VESetGraph {
 	vertex_set: HashSet<usize>, // {u, v, ...}
 }
 
-impl VESetGraph {
-	fn remap_vertices(&mut self, v: usize) {
-		let last_vertex = self.vertex_set.len();
-		self.vertex_set.remove(&last_vertex);
-		self.vertex_set.insert(v);
-		for edge in &mut self.edge_list {
-			if edge.0 == last_vertex {
-				edge.0 = v;
-			} else if edge.1 == last_vertex {
-				edge.1 = v;
-			}
-			if edge.0 > edge.1 {
-				*edge = (edge.1, edge.0);
-			}
-		}
-	}
-}
-
 impl UnMulGraph for VESetGraph {
 	fn add_edge(&mut self, u: usize, v: usize) {
 		if u == v {
@@ -55,22 +37,14 @@ impl UnMulGraph for VESetGraph {
 		});
 		self.edge_list.retain(|&(a, b)| a != b);
 
-		// Remap vertices to ensure that the vertices are contiguous
-		if self.len_vertices() != v {
-			self.remap_vertices(v);
-		}
-
 		// Remove vertex `u` if there are no more edges connected to it
 		if !self.edge_list.iter().any(|&(a, b)| a == u || b == u) {
 			self.vertex_set.remove(&u);
-
-			// Remap vertices to ensure that the vertices are contiguous
-			self.remap_vertices(u);
 		}
 	}
 
 	fn get_num_edges(&self, u: usize, v: usize) -> usize {
-		self.edge_list.iter().filter(|&&(a, b)| (a == u && b == v) || (a == v && b == u)).count()
+		self.edge_list.iter().filter(|&&(a, b)| a.min(b) == u && b.max(a) == v).count()
 	}
 
 	fn get_random_edge(&self) -> (usize, usize) {
@@ -87,5 +61,9 @@ impl UnMulGraph for VESetGraph {
 
 	fn len_edges(&self) -> usize {
 		self.edge_list.len()
+	}
+
+	fn vertex_set(&self) -> &HashSet<usize> {
+		&self.vertex_set
 	}
 }

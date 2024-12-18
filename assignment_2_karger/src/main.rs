@@ -3,7 +3,7 @@ use rayon::prelude::*;
 
 fn main() {
 	// Define the operations and their corresponding file names
-	let tasks:Vec<(fn(usize)->usize, &str)>  = vec![
+	let tasks: Vec<(fn(usize) -> usize, &str)> = vec![
 		(
 			|v: usize| 2 * v,
 			"generated_data/hundred_2v.csv",
