@@ -48,14 +48,14 @@ pub fn generate_data<F>(
 		wtr.write_record(&["fast_cut", &vertices.to_string(), &edges.to_string(), &time_fast.to_string(), &percentage_fast.to_string()])
 			.expect("Failed to write FastCut row");
 
-		println!("Result for FastCut: {}", best_result_fast);
+		println!("For a graph with {} vertices and {} edges, FastCut took {} µs and found {}", vertices, edges, time_fast, best_result_fast);
 
 		// Analyze using Contract
 		let (best_result_contract, time_contract, percentage_contract) = analyze_algorithm(graph.clone(), contract);
 		wtr.write_record(&["contract", &vertices.to_string(), &edges.to_string(), &time_contract.to_string(), &percentage_contract.to_string()])
 			.expect("Failed to write Contract row");
 
-		println!("Result for Contract: {}", best_result_contract);
+		println!("For a graph with {} vertices and {} edges, Contract took {} µs and found {}", vertices, edges, time_contract, best_result_contract);
 
 		wtr.flush().expect("Failed to flush CSV writer");
 	}

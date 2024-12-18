@@ -44,7 +44,7 @@ impl UnMulGraph for VESetGraph {
 	}
 
 	fn get_num_edges(&self, u: usize, v: usize) -> usize {
-		self.edge_list.iter().filter(|&&(a, b)| a.min(b) == u && b.max(a) == v).count()
+		self.edge_list.iter().filter(|&&(a, b)| (a == u && b == v) || (a == v && b == u)).count()
 	}
 
 	fn get_random_edge(&self) -> (usize, usize) {
