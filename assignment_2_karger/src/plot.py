@@ -154,5 +154,5 @@ def plot_same_time(csv_file):
 
 if __name__ == "__main__":
 	# Generate plots
-	plot_success_rates("data_success_bounds_200.csv")  # Includes theoretical bounds
-	plot_same_time("data_same_time_200.csv")          # Excludes theoretical bounds
+	plot_success_rates("data_success_bounds_300.csv")  # Includes theoretical bounds
+	plot_same_time("data_same_time_300.csv")          # Excludes theoretical bounds
