@@ -6,6 +6,7 @@ use std::collections::HashSet;
 pub struct GraphGenerator {
 	num_vertices: usize,
 	num_edges: usize,
+	max_edges: bool,
 }
 
 impl GraphGenerator {
@@ -13,6 +14,7 @@ impl GraphGenerator {
 		Self {
 			num_vertices: 0,
 			num_edges: 0,
+			max_edges: false,
 		}
 	}
 
@@ -28,6 +30,7 @@ impl GraphGenerator {
 	pub fn set_num_edges(mut self, num_edges: usize) -> Self {
 		assert!(num_edges >= 1, "Number of edges must be at least 1.");
 		self.num_edges = num_edges;
+		self.max_edges = false;
 		self
 	}
 
@@ -42,7 +45,7 @@ impl GraphGenerator {
 			self.num_vertices > 1,
 			"Number of vertices must be set first."
 		);
-		self.num_edges = self.num_vertices * (self.num_vertices - 1) / 2;
+		self.max_edges = true;
 		self
 	}
 
@@ -87,11 +90,14 @@ impl GraphGenerator {
 		graph
 	}
 
-	pub fn build_complete_graph<T: UnMulGraph + Default>(self) -> T {
+	pub fn build_complete<T: UnMulGraph + Default>(mut self) -> T {
 		assert!(
 			self.num_vertices > 0,
 			"Number of vertices must be greater than 0."
 		);
+
+		self.num_edges = self.num_vertices * (self.num_vertices - 1) / 2;
+		self.max_edges = true;
 
 		let mut graph = T::default();
 		for u in 0..self.num_vertices {
@@ -103,10 +109,12 @@ impl GraphGenerator {
 		graph
 	}
 
-	pub fn build_planar_graph<T: UnMulGraph + Default>(self) -> T {
+	pub fn build_planar<T: UnMulGraph + Default>(mut self) -> T {
 		assert!(self.num_vertices > 2, "Number of vertices must be greater than 2 for a planar graph.");
 		let max_edges = 3 * self.num_vertices - 6;
-		assert!(self.num_edges <= max_edges, "Number of edges exceeds maximum possible for a planar graph.");
+		if self.max_edges {
+			self.num_edges = max_edges;
+		}
 
 		let mut graph = T::default();
 
