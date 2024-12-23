@@ -87,8 +87,6 @@ pub fn generate_data_same_time(num_vertices: &Vec<usize>, csv_file_name: &str) {
 	// Compute the success rate of each algorithm for the same amount of time
 	// Write the results to a CSV file
 
-	// TODO:
-
 	let mut writer = Writer::from_path(csv_file_name).expect("Cannot create CSV file");
 	writer.write_record(&["Graph Size", "Graph Type", "FastCut Success Rate", "Contract Success Rate"]).expect("Cannot write to CSV file");
 
