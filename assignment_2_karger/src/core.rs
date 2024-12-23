@@ -5,7 +5,7 @@ use std::collections::HashSet;
 #[derive(Debug, Clone, Default)]
 pub struct VESetGraph {
 	edge_list: Vec<(usize, usize)>, // [(u, v), ...]
-	vertex_set: HashSet<usize>, // {u, v, ...}
+	vertex_set: HashSet<usize>,     // {u, v, ...}
 }
 
 impl UnMulGraph for VESetGraph {
@@ -29,8 +29,12 @@ impl UnMulGraph for VESetGraph {
 		// Remove vertex `v` from the vertex set
 		self.vertex_set.remove(&v);
 		self.edge_list.iter_mut().for_each(|edge| {
-			if edge.0 == v { edge.0 = u; }
-			if edge.1 == v { edge.1 = u; }
+			if edge.0 == v {
+				edge.0 = u;
+			}
+			if edge.1 == v {
+				edge.1 = u;
+			}
 			if edge.0 > edge.1 {
 				*edge = (edge.1, edge.0);
 			}
@@ -44,11 +48,18 @@ impl UnMulGraph for VESetGraph {
 	}
 
 	fn get_num_edges(&self, u: usize, v: usize) -> usize {
-		self.edge_list.iter().filter(|&&(a, b)| (a == u && b == v) || (a == v && b == u)).count()
+		self.edge_list
+			.iter()
+			.filter(|&&(a, b)| (a == u && b == v) || (a == v && b == u))
+			.count()
 	}
 
 	fn get_random_edge(&self) -> (usize, usize) {
-		self.edge_list.iter().cloned().choose(&mut rand::thread_rng()).expect("No edges available")
+		self.edge_list
+			.iter()
+			.cloned()
+			.choose(&mut rand::thread_rng())
+			.expect("No edges available")
 	}
 
 	fn edge_exists(&self, u: usize, v: usize) -> bool {

@@ -14,7 +14,6 @@ pub trait UnMulGraph: Debug + Clone {
 	fn vertex_set(&self) -> &HashSet<usize>; // Return the set of vertices
 }
 
-
 // Karger's Algorithms for finding the minimum cut of a graph
 
 pub fn contract(mut graph: impl UnMulGraph) -> usize {
@@ -44,9 +43,8 @@ pub fn fast_cut(graph: impl UnMulGraph + Clone) -> usize {
 	}
 }
 
-
 // Helper function to generate all possible bipartitions of a set
-fn bipartitions(set: &HashSet<usize>) -> impl Iterator<Item=(HashSet<usize>, HashSet<usize>)> {
+fn bipartitions(set: &HashSet<usize>) -> impl Iterator<Item = (HashSet<usize>, HashSet<usize>)> {
 	let elements: Vec<_> = set.iter().cloned().collect();
 
 	(1..(1 << elements.len())).filter_map(move |mask| {
@@ -69,7 +67,6 @@ fn bipartitions(set: &HashSet<usize>) -> impl Iterator<Item=(HashSet<usize>, Has
 		}
 	})
 }
-
 
 // Brute force algorithm for finding the minimum cut of a graph
 pub fn min_cut(graph: impl UnMulGraph + Clone) -> usize {
